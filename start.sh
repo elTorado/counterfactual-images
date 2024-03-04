@@ -2,11 +2,19 @@
 # Break on any error
 set -e
 
-DATASET_DIR=data/
+DATASET_DIR=/home/deanheizmann/data/
 
 # Download any datasets not currently available
 # TODO: do this in python, based on --dataset
-if [ ! -f $DATASET_DIR/svhn-split0a.dataset ]; then
+
+if [ ! -f $DATASET_DIR/cifar10-split0a.dataset ]; then
+    python generativeopenset/datasets/download_cifar10.py
+fi
+if [ ! -f $DATASET_DIR/mnist-split0a.dataset ]; then
+    python generativeopenset/datasets/download_mnist.py
+fi
+
+'''if [ ! -f $DATASET_DIR/svhn-split0a.dataset ]; then
     python generativeopenset/datasets/download_svhn.py
 fi
 if [ ! -f $DATASET_DIR/cifar10-split0a.dataset ]; then
@@ -24,7 +32,7 @@ fi
 if [ ! -f $DATASET_DIR/cifar100-animals.dataset ]; then
     python generativeopenset/datasets/download_cifar100.py
 fi
-
+'''
 # Hyperparameters
 GAN_EPOCHS=30
 CLASSIFIER_EPOCHS=3
@@ -33,7 +41,7 @@ GENERATOR_MODE=open_set
 
 
 # Train the intial generative model (E+G+D) and the initial classifier (C_K)
-python src/train_gan.py --epochs $GAN_EPOCHS
+python generativeopenset/train_gan.py --epochs $GAN_EPOCHS
 
 # Baseline: Evaluate the standard classifier (C_k+1)
 python src/evaluate_classifier.py --result_dir . --mode baseline

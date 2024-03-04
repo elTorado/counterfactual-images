@@ -23,7 +23,7 @@ def save_options(options):
 
 
 def load_options(options):
-    print("{} with options:".format(options['result_dir']))
+    print("Resuming existing experiment at {} with options:".format(options['result_dir']))
 
     param_path = get_param_path(options['result_dir'])
     old_opts = json.load(open(param_path))

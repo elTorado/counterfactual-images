@@ -18,7 +18,7 @@ DOWNLOAD_URL_TRAIN_MAT = 'http://ufldl.stanford.edu/housenumbers/train_32x32.mat
 DOWNLOAD_URL_TEST_MAT = 'http://ufldl.stanford.edu/housenumbers/test_32x32.mat'
 
 
-DATA_DIR = '/mnt/data'
+DATA_DIR = '/home/deanheizmann/data/'
 DATASET_NAME = 'svhn'
 DATASET_PATH = os.path.join(DATA_DIR, DATASET_NAME)
 

@@ -8,7 +8,7 @@ import json
 from PIL import Image
 from tqdm import tqdm
 
-DATA_DIR = '/mnt/data'
+DATA_DIR = '/home/deanheizmann/data/'
 DOWNLOAD_URL = 'https://s3.amazonaws.com/img-datasets/mnist.npz'
 LATEST_MD5 = ''
 DATASET_NAME = 'mnist'
