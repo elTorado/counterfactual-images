@@ -8,12 +8,12 @@ from torch.autograd import Variable
 from vector import make_noise
 from dataloader import FlexibleCustomDataloader
 import imutil
-from logutil import TimeSeries
+import logutil
 
 from gradient_penalty import calc_gradient_penalty
 
 
-log = TimeSeries('Training GAN')
+log = logutil.TimeSeries('Training GAN')
 
 
 def train_gan(networks, optimizers, dataloader, epoch=None, **options):
