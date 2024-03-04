@@ -2,37 +2,9 @@
 # Break on any error
 set -e
 
-DATASET_DIR=/home/deanheizmann/data/
+DATASET_DIR=/home/user/heizmann/data/
 
-# Download any datasets not currently available
-# TODO: do this in python, based on --dataset
 
-if [ ! -f $DATASET_DIR/cifar10-split0a.dataset ]; then
-    python generativeopenset/datasets/download_cifar10.py
-fi
-if [ ! -f $DATASET_DIR/mnist-split0a.dataset ]; then
-    python generativeopenset/datasets/download_mnist.py
-fi
-
-'''if [ ! -f $DATASET_DIR/svhn-split0a.dataset ]; then
-    python generativeopenset/datasets/download_svhn.py
-fi
-if [ ! -f $DATASET_DIR/cifar10-split0a.dataset ]; then
-    python generativeopenset/datasets/download_cifar10.py
-fi
-if [ ! -f $DATASET_DIR/mnist-split0a.dataset ]; then
-    python generativeopenset/datasets/download_mnist.py
-fi
-if [ ! -f $DATASET_DIR/oxford102.dataset ]; then
-    python generativeopenset/datasets/download_oxford102.py
-fi
-if [ ! -f $DATASET_DIR/celeba.dataset ]; then
-    python generativeopenset/datasets/download_celeba.py
-fi
-if [ ! -f $DATASET_DIR/cifar100-animals.dataset ]; then
-    python generativeopenset/datasets/download_cifar100.py
-fi
-'''
 # Hyperparameters
 GAN_EPOCHS=30
 CLASSIFIER_EPOCHS=3
