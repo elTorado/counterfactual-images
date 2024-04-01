@@ -224,7 +224,7 @@ def openset_weibull(dataloader_test, dataloader_train, netC):
 def openset_kplusone(dataloader, netC):
     openset_scores = []
     with torch.no_grad():  # Disable gradient calculation
-        for images, labels in enumerate(dataloader):
+        for images, labels in dataloader:
             preds = netC(images)
             z = torch.exp(preds).sum(dim=1)
             prob_known = z / (z + 1)
