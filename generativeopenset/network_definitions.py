@@ -314,7 +314,10 @@ class classifier32(nn.Module):
         self.cuda()
 
     def forward(self, x, return_features=False):
-        batch_size = len(x)
+        print("********* DISCRIMINATOR32: this is X:" +x+"*****************")
+        print("********* DISCRIMINATOR32: this is self.batch_size:" +self.batch_size+"*****************")
+
+        batch_size = self.batch_size
 
         x = self.dr1(x)
         x = self.conv1(x)
