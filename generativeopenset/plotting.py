@@ -16,17 +16,22 @@ class NoDataAvailable(Exception):
     pass
 
 
+import pandas as pd
+
 def plot_xy(x, y, x_axis="X", y_axis="Y", title="Plot"):
     df = pd.DataFrame({'x': x, 'y': y})
-    plot = df.plot(x='x', y='y')
+    ax = df.plot(x='x', y='y')  # 'ax' is a more common naming convention for AxesSubplot objects
 
-    plot.grid(b=True, which='major')
-    plot.grid(b=True, which='minor')
-    
-    plot.set_title(title)
-    plot.set_ylabel(y_axis)
-    plot.set_xlabel(x_axis)
-    return plot
+    ax.grid(True, which='major')  # Enable major grid lines
+    ax.minorticks_on()  # Necessary for minor grid lines to be visible
+    ax.grid(True, which='minor', linestyle=':', linewidth='0.5')  # Custom style for minor grid lines
+
+    ax.set_title(title)
+    ax.set_ylabel(y_axis)
+    ax.set_xlabel(x_axis)
+
+    return ax
+
 
 
 def parse_active_learning_series(eval_filename, prefix='active_trajectories', statistic='accuracy'):
