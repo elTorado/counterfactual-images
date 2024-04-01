@@ -236,7 +236,7 @@ def openset_kplusone(dataloader, netC):
 def openset_softmax_confidence(dataloader, netC):
     openset_scores = []
     with torch.no_grad():
-        for images, labels in enumerate(dataloader):
+        for images, labels in dataloader:
             preds = F.softmax(netC(images), dim=1)
             openset_scores.extend(preds.max(dim=1)[0].cpu().numpy())
     return -np.array(openset_scores)
@@ -245,7 +245,7 @@ def openset_softmax_confidence(dataloader, netC):
 def openset_fuxin(dataloader, netC):
     openset_scores = []
     with torch.no_grad():
-        for images, labels in enumerate(dataloader):
+        for images, labels in (dataloader):
             logits = netC(images)
             augmented_logits = F.pad(logits, pad=(0, 1), value=0)  # Specify padding value explicitly
             preds = F.softmax(augmented_logits, dim=1)
