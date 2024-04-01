@@ -1,7 +1,7 @@
 import math
 import torch
-from .dataset_file import DatasetFile
-from .converter import ImageConverter, LabelConverter, FlexibleLabelConverter
+from dataset_file import DatasetFile
+from converter import ImageConverter, LabelConverter, FlexibleLabelConverter
 
 
 class CustomDataloader(object):
