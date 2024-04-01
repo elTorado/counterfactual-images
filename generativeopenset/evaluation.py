@@ -13,9 +13,13 @@ from plotting import plot_xy
 WEIBULL_TAIL_SIZE = 20
 
 
+import torch.nn.functional as F
+
 def evaluate_classifier(networks, dataloader, open_set_dataloader=None, **options):
     for net in networks.values():
-        net.eval()
+        net.eval()  # Set the network to evaluation mode
+    
+    # Determine which classifier to use based on the mode
     if options.get('mode') == 'baseline':
         print("Using the K-class classifier")
         netC = networks['classifier_k']
@@ -29,19 +33,22 @@ def evaluate_classifier(networks, dataloader, open_set_dataloader=None, **option
 
     classification_closed_correct = 0
     classification_total = 0
-    for images, labels in dataloader:
-        images = Variable(images, volatile=True)
-        # Predict a classification among known classes
-        net_y = netC(images)
-        class_predictions = F.softmax(net_y, dim=1)
+    
+    # Process images in the dataloader
+    with torch.no_grad():  # Disable gradient calculations
+        for images, labels in dataloader:
+            # Removed Variable, directly use tensors with no_grad
+            net_y = netC(images)  # Forward pass
+            class_predictions = F.softmax(net_y, dim=1)
 
-        _, predicted = class_predictions.max(1)
-        classification_closed_correct += sum(predicted.data == labels)
-        classification_total += len(labels)
+            _, predicted = class_predictions.max(1)
+            classification_closed_correct += (predicted == labels).sum().item()  # Updated for PyTorch >0.4
+            classification_total += labels.size(0)  # Updated to use size
 
+    # Calculate and return stats
     stats = {
         fold: {
-            'closed_set_accuracy': float(classification_closed_correct) / (classification_total),
+            'closed_set_accuracy': float(classification_closed_correct) / classification_total,
         }
     }
     return stats
@@ -216,42 +223,36 @@ def openset_weibull(dataloader_test, dataloader_train, netC):
 
 def openset_kplusone(dataloader, netC):
     openset_scores = []
-    for i, (images, labels) in enumerate(dataloader):
-        images = Variable(images, volatile=True)
-        preds = netC(images)
-        # The implicit K+1th class (the open set class) is computed
-        #  by assuming an extra linear output with constant value 0
-        z = torch.exp(preds).sum(dim=1)
-        prob_known = z / (z + 1)
-        prob_unknown = 1 - prob_known
-        openset_scores.extend(prob_unknown.data.cpu().numpy())
+    with torch.no_grad():  # Disable gradient calculation
+        for images, labels in enumerate(dataloader):
+            preds = netC(images)
+            z = torch.exp(preds).sum(dim=1)
+            prob_known = z / (z + 1)
+            prob_unknown = 1 - prob_known
+            openset_scores.extend(prob_unknown.cpu().numpy())
     return np.array(openset_scores)
 
 
 def openset_softmax_confidence(dataloader, netC):
     openset_scores = []
-    for i, (images, labels) in enumerate(dataloader):
-        images = Variable(images, volatile=True)
-        preds = F.softmax(netC(images), dim=1)
-        openset_scores.extend(preds.max(dim=1)[0].data.cpu().numpy())
+    with torch.no_grad():
+        for images, labels in enumerate(dataloader):
+            preds = F.softmax(netC(images), dim=1)
+            openset_scores.extend(preds.max(dim=1)[0].cpu().numpy())
     return -np.array(openset_scores)
 
 
 def openset_fuxin(dataloader, netC):
     openset_scores = []
-    for i, (images, labels) in enumerate(dataloader):
-        images = Variable(images, volatile=True)
-        logits = netC(images)
-        augmented_logits = F.pad(logits, pad=(0,1))
-        # The implicit K+1th class (the open set class) is computed
-        #  by assuming an extra linear output with constant value 0
-        preds = F.softmax(augmented_logits)
-        #preds = augmented_logits
-        prob_unknown = preds[:, -1]
-        prob_known = preds[:, :-1].max(dim=1)[0]
-        prob_open = prob_unknown - prob_known
-
-        openset_scores.extend(prob_open.data.cpu().numpy())
+    with torch.no_grad():
+        for images, labels in enumerate(dataloader):
+            logits = netC(images)
+            augmented_logits = F.pad(logits, pad=(0, 1), value=0)  # Specify padding value explicitly
+            preds = F.softmax(augmented_logits, dim=1)
+            prob_unknown = preds[:, -1]
+            prob_known = preds[:, :-1].max(dim=1)[0]
+            prob_open = prob_unknown - prob_known
+            openset_scores.extend(prob_open.cpu().numpy())
     return np.array(openset_scores)
 
 
