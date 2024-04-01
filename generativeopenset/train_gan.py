@@ -21,7 +21,10 @@ from comparison import evaluate_with_comparison
 
 options = load_options(options)
 dataloader = FlexibleCustomDataloader(fold='train', **options)
+print("############ IN train_gan : LOEADED DATALOADER #######################")
+
 eval_dataloader = CustomDataloader(fold='test', **options)
+print("############ IN train_gan : LOEADED Eval_dataloader #######################")
 
 networks = build_networks(dataloader.num_classes, **options)
 optimizers = get_optimizers(networks, **options)

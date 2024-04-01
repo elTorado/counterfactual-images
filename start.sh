@@ -25,7 +25,7 @@ cp checkpoints/classifier_k_epoch_00${GAN_EPOCHS}.pth checkpoints/classifier_kpl
 python src/generate_${GENERATOR_MODE}.py --result_dir . --count $CF_COUNT
 
 # Automatically label the rightmost column in each grid (ignore the others)
-python src/auto_label.py --output_filename generated_images_${GENERATOR_MODE}.dataset
+python src/auto_label.py --output_filename generated_images_${GENERATOR_MODE}.dataseit
 
 # Train a new classifier, now using the aux_dataset containing the counterfactuals
 python src/train_classifier.py --epochs $CLASSIFIER_EPOCHS --aux_dataset generated_images_${GENERATOR_MODE}.dataset

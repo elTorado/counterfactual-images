@@ -9,8 +9,11 @@
   "__dataset": "/home/deanheizmann/data/cifar10-split0a.dataset",
   "__comparison_dataset": "/home/deanheizmann/data/cifar10-split0b.dataset",
 
-  "dataset": "/home/deanheizmann/data/tinyimagenet/archive/tiny-imagenet-200/train/n01443537/images",
-  "comparison_dataset": "/home/deanheizmann/data/tinyimagenet/archive/tiny-imagenet-200/train/n01629819/images",
+  "dataset": "/home/user/heizmann/data/cifar10-split0a.dataset",
+  "comparison_dataset": "/home/user/heizmann/data/cifar10-split0b.dataset",
+
+  "_dataset": "/home/deanheizmann/data/tinyimagenet/archive/tiny-imagenet-200/train/n01443537/images",
+  "_comparison_dataset": "/home/deanheizmann/data/tinyimagenet/archive/tiny-imagenet-200/train/n01629819/images",
 
   "hypothesis": "Example run on tiny imagenet",
   "delete_background": false,
