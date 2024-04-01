@@ -35,12 +35,22 @@ def load_options(options):
     return options
 
 
+import os
+
 def get_param_path(result_dir):
-    if os.path.exists(os.path.join(result_dir, 'params.json')):
-        return os.path.join(result_dir, 'params.json')
-    elif os.path.exists(os.path.join(result_dir, 'default_params.json')):
-        return os.path.join(result_dir, 'default_params.json')
-    raise ValueError("Could not find {}/params.json".format(result_dir))
+    params_path = os.path.join(result_dir, 'params.json')
+    default_params_path = os.path.join(result_dir, 'default_params.json')
+    
+    print("Looking for params.json at:", params_path)
+    if os.path.exists(params_path):
+        return params_path
+
+    print("Looking for default_params.json at:", default_params_path)
+    if os.path.exists(default_params_path):
+        return default_params_path
+
+    raise ValueError(f"Could not find params.json or default_params.json in {result_dir}")
+
 
 
 def get_current_epoch(result_dir):
