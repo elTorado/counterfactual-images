@@ -6,8 +6,8 @@ DATASET_DIR=/home/user/heizmann/data/
 
 
 # Hyperparameters
-GAN_EPOCHS=30
-CLASSIFIER_EPOCHS=3
+GAN_EPOCHS=1
+CLASSIFIER_EPOCHS=1
 CF_COUNT=50
 GENERATOR_MODE=open_set
 
