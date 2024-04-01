@@ -37,17 +37,24 @@ def load_options(options):
 
 import os
 
+
+
 def get_param_path(result_dir):
     params_path = os.path.join(result_dir, 'params.json')
     default_params_path = os.path.join(result_dir, 'default_params.json')
-    
-    print("Looking for params.json at:", params_path)
+
+    # Check for params.json
     if os.path.exists(params_path):
         return params_path
 
-    print("Looking for default_params.json at:", default_params_path)
+    # Check for default_params.json
     if os.path.exists(default_params_path):
         return default_params_path
+
+    # If neither file is found, print all files in the directory
+    print(f"Could not find params.json or default_params.json in {result_dir}. Listing all files in the directory:")
+    for file in os.listdir(result_dir):
+        print(file)
 
     raise ValueError(f"Could not find params.json or default_params.json in {result_dir}")
 
