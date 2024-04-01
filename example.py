@@ -12,7 +12,7 @@ import torchvision
 
 import imutil
 from logutil import TimeSeries
-from datasetutil.dataloader import CustomDataloader
+from generativeopenset.dataloader import CustomDataloader
 
 
 CLASSIFIER_EPOCHS = 10

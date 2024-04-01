@@ -22,22 +22,22 @@ def to_np(z):
 # Generates 'counterfactual' images for each class, by gradient descent of the class
 def generate_counterfactual(networks, dataloader, **options):
     """
-    # TODO: Fix Dropout/BatchNormalization outside of training
+    # TODO: Fix Dropout/BatchNormalization outside of training -> CHAT GPT SAYS IT WORKS BY UNCOMMENTIG THAT PART
     for net in networks:
         networks[net].eval()
     """
     result_dir = options['result_dir']
 
     # NOTE: Too many classes in datasets like cub200
-    K = min(dataloader.num_classes, 10)
+    K = min(dataloader.num_classes, 10) #LIMITS K TO 10 IF THERE ARE MORE CLASSES
     # Make the batch size large enough to form a square grid
     cf_count = K + 2
 
     # Start with randomly-selected images from the dataloader
     start_images, _ = dataloader.get_batch()
-    start_images = start_images[:cf_count]  # assume batch_size >= cf_count
+    start_images = start_images[:cf_count]  # assume batch_size >= cf_count, we need at least as many start images, as cf_count
 
-    batches = [start_images.cpu().numpy()]
+    batches = [start_images.cpu().numpy()] #convert start images to numpy arrays
     for target_class in range(K + 1):
         # Generate one column of the visualization, corresponding to a target class
         img_batch = generate_counterfactual_column(networks, start_images, target_class, **options)
@@ -48,7 +48,7 @@ def generate_counterfactual(networks, dataloader, **options):
         for batch in batches:
             images.append(batch[i])
 
-    images = np.array(images).transpose((0,2,3,1))
+    images = np.array(images).transpose((0,2,3,1)) #re order dimensions for saving or displaying
     dummy_class = 0
     video_filename = make_video_filename(result_dir, dataloader, dummy_class, dummy_class, label_type='grid')
 
