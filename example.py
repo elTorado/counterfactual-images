@@ -20,7 +20,7 @@ GENERATIVE_EPOCHS = 10
 BATCH_SIZE = 64
 LATENT_SIZE = 20
 NUM_CLASSES = 10
-EMNIST_LOCATION = '/mnt/nfs/data/emnist.dataset'
+EMNIST_LOCATION = '/home/user/heizmann/data/emnist.dataset'
 
 
 class Classifier(nn.Module):
