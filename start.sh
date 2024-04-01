@@ -16,13 +16,13 @@ GENERATOR_MODE=open_set
 python generativeopenset/train_gan.py --epochs $GAN_EPOCHS
 
 # Baseline: Evaluate the standard classifier (C_k+1)
-python generativeopenset/evaluate_classifier.py --result_dir /home/heizmann/counterfactual-images/checkpoints --mode baseline
+python generativeopenset/evaluate_classifier.py --result_dir /home/user/heizmann/counterfactual-images --mode baseline
 python generativeopenset/evaluate_classifier.py --result_dir . --mode weibull
 
 cp checkpoints/classifier_k_epoch_00${GAN_EPOCHS}.pth checkpoints/classifier_kplusone_epoch_00${GAN_EPOCHS}.pth
 
 # Generate a number of counterfactual images (in the K+2 by K+2 square grid format)
-python generativeopenset/generate_${GENERATOR_MODE}.py --result_dir . --count $CF_COUNT
+python generativeopenset/generate_${GENERATOR_MODE}.py --result_dir /home/user/heizmann/counterfactual-images --count $CF_COUNT
 
 # Automatically label the rightmost column in each grid (ignore the others)
 python generativeopenset/auto_label.py --output_filename generated_images_${GENERATOR_MODE}.dataseit

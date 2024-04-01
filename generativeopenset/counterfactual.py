@@ -21,6 +21,8 @@ def to_np(z):
 
 # Generates 'counterfactual' images for each class, by gradient descent of the class
 def generate_counterfactual(networks, dataloader, **options):
+    
+    print("**************** ENTERING COUNTERFACTUALS GENERATION PROCESS*****************")
     """
     # TODO: Fix Dropout/BatchNormalization outside of training -> CHAT GPT SAYS IT WORKS BY UNCOMMENTIG THAT PART
     for net in networks:
@@ -30,6 +32,8 @@ def generate_counterfactual(networks, dataloader, **options):
 
     # NOTE: Too many classes in datasets like cub200
     K = min(dataloader.num_classes, 10) #LIMITS K TO 10 IF THERE ARE MORE CLASSES
+    print("======================== NUMBER OF CLASSES CLASSES:===========================")
+    print(K)
     # Make the batch size large enough to form a square grid
     cf_count = K + 2
 
@@ -38,6 +42,9 @@ def generate_counterfactual(networks, dataloader, **options):
     start_images = start_images[:cf_count]  # assume batch_size >= cf_count, we need at least as many start images, as cf_count
 
     batches = [start_images.cpu().numpy()] #convert start images to numpy arrays
+    
+    print("======================== BATCHES:===========================")
+    print(batches)
     for target_class in range(K + 1):
         # Generate one column of the visualization, corresponding to a target class
         img_batch = generate_counterfactual_column(networks, start_images, target_class, **options)
@@ -114,6 +121,7 @@ def generate_counterfactual_column(networks, start_images, target_class, **optio
     target_label = Variable(torch.LongTensor(cf_batch_size)).cuda()
     target_label[:] = target_class
 
+    print(" ============= ENTERING IMAGE GENERATION ====================")
     for i in range(max_iters):
         z = to_torch(z_value, requires_grad=True)
         z_0 = to_torch(z0_value)
