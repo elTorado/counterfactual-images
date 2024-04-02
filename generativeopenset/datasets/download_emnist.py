@@ -7,7 +7,7 @@ from tqdm import tqdm
 from PIL import Image
 from scipy import io as sio
 
-DATA_DIR = '/mnt/data'
+DATA_DIR = '/home/deanheizmann/data/'
 DATASET_NAME = 'emnist'
 DATASET_PATH = os.path.join(DATA_DIR, DATASET_NAME)
 

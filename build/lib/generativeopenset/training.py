@@ -185,6 +185,7 @@ def train_classifier(networks, optimizers, dataloader, epoch=None, **options):
     print("Using aux_dataset {}".format(dataset_filename))
     aux_dataloader = FlexibleCustomDataloader(dataset_filename, batch_size=batch_size, image_size=image_size)
 
+    #TODO check this enumrates, it might be wrong
     for i, (images, class_labels) in enumerate(dataloader):
         images = Variable(images)
         labels = Variable(class_labels)
