@@ -7,108 +7,77 @@ from tqdm import tqdm
 from PIL import Image
 from scipy import io as sio
 
-DATA_DIR = '/home/deanheizmann/data/'
+DATA_DIR = '/home/deanheizmann/data/emnist/matlab.zip'
 DATASET_NAME = 'emnist'
 DATASET_PATH = os.path.join(DATA_DIR, DATASET_NAME)
 
-IMAGES_LABELS_URL = 'http://www.itl.nist.gov/iaui/vip/cs_links/EMNIST/matlab.zip'
 # Alternative format matching the original MNIST
-#IMAGES_LABELS_URL = 'http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip'
+IMAGES_LABELS_URL = 'http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip'
+
+# old path, not working anymore IMAGES_LABELS_URL = 'http://www.itl.nist.gov/iaui/vip/cs_links/EMNIST/matlab.zip'
 
 
-def main():
-    print("{} dataset download script initializing...".format(DATASET_NAME))
-    mkdir(DATA_DIR)
-    mkdir(DATASET_PATH)
-    os.chdir(DATASET_PATH)
-
-    print("Downloading {} dataset files to {}...".format(DATASET_NAME, DATASET_PATH))
-    download('matlab.zip', IMAGES_LABELS_URL)
-
-    print("Converting EMNIST letters...")
-    mkdir(os.path.join(DATASET_PATH, 'letters'))
-    mat_filename = os.path.join(DATASET_PATH, 'matlab', 'emnist-letters.mat')
-
-    mat = sio.loadmat(mat_filename)
-    dataset = mat['dataset'][0][0]
-
-    # TODO: Convert matlab-format data into numpy matrices
-    train_digits = dataset[0][0][0][0]
-    train_labels = dataset[0][0][0][1]
-
-    test_digits = dataset[1][0][0][0]
-    test_labels = dataset[1][0][0][1]
-
-    print("Converting EMNIST letters training set...")
-    train_examples = convert_emnist(train_digits, train_labels, fold='train')
-
-    print("Converting EMNIST letters testing set...")
-    test_examples = convert_emnist(test_digits, test_labels, fold='test')
-
-    print("Saving .dataset file...")
-    save_image_dataset(train_examples + test_examples)
-    print("Dataset convertion finished")
-
-
-def convert_emnist(digits, labels, fold):
-    examples = []
-    assert len(digits) == len(labels)
-    for i in tqdm(range(len(digits))):
-        label = chr(64 + labels[i])
-        filename = 'letter_{:06d}.png'.format(i)
-        filename = os.path.join(DATASET_PATH, 'letters', filename)
-        pixels = mnist_to_np(digits[i])
-        Image.fromarray(pixels).save(filename)
-        examples.append({
-            "filename": filename,
-            "fold": fold,
-            "label": label
-        })
-    return examples
-
-
-def mnist_to_np(raw):
-    return raw.reshape((28,28)).transpose()
-
-
-def mkdir(path):
-    path = os.path.expanduser(path)
-    if not os.path.exists(path):
-        print('Creating directory {}'.format(path))
-        os.mkdir(path)
-
-
-def listdir(path):
-    filenames = os.listdir(os.path.expanduser(path))
-    filenames = sorted(filenames)
-    return [os.path.join(path, fn) for fn in filenames]
 
 
 def download(filename, url):
     if os.path.exists(filename):
         print("File {} already exists, skipping".format(filename))
     else:
-        # TODO: security lol
-        os.system('wget -nc {} -O {}'.format(url, filename))
-        if filename.endswith('.tgz') or filename.endswith('.tar.gz'):
-            os.system('ls *gz | xargs -n 1 tar xzvf')
-        elif filename.endswith('.zip'):
-            os.system('unzip *.zip')
+        print(f"Downloading {filename} from {url}...")
+        os.system(f'wget -nc {url} -O {filename}')
+        if filename.endswith('.zip'):
+            os.system('unzip -o *.zip')
 
+def mkdir(path):
+    if not os.path.exists(path):
+        print('Creating directory {}'.format(path))
+        os.makedirs(path)
 
-def train_test_split(filename):
-    # Training examples end with 0, test with 1, validation with 2
-    return [line.strip().endswith('0') for line in open(filename)]
+def extract_gzip(gzip_path, output_path):
+    print(f"Extracting {gzip_path}...")
+    with gzip.open(gzip_path, 'rb') as f_in, open(output_path, 'wb') as f_out:
+        f_out.write(f_in.read())
 
+def read_idx(filename):
+    with open(filename, 'rb') as f:
+        zero, data_type, dims = struct.unpack('>HBB', f.read(4))
+        shape = tuple(struct.unpack('>I', f.read(4))[0] for d in range(dims))
+        return np.frombuffer(f.read(), dtype=np.uint8).reshape(shape)
 
-def save_image_dataset(examples):
-    output_filename = '{}/{}.dataset'.format(DATA_DIR, DATASET_NAME)
-    fp = open(output_filename, 'w')
-    for line in examples:
-        fp.write(json.dumps(line) + '\n')
-    fp.close()
-    print("Wrote {} items to {}".format(len(examples), output_filename))
+def convert_emnist(images, labels, fold):
+    examples = []
+    assert images.shape[0] == labels.shape[0]
+    letters_path = os.path.join(DATASET_PATH, 'letters')
+    mkdir(letters_path)
+    for i in tqdm(range(len(images))):
+        label = chr(labels[i] + 64)  # Adjust label calculation as needed
+        filename = os.path.join(letters_path, f'letter_{i:06d}.png')
+        image = images[i].reshape(28, 28)  # Adjust reshape for your dataset's format
+        Image.fromarray(image).save(filename)
+        examples.append({"filename": filename, "fold": fold, "label": label})
+    return examples
 
+def main():
+    print(f"{DATASET_NAME} dataset download script initializing...")
+    mkdir(DATA_DIR)
+    mkdir(DATASET_PATH)
+    os.chdir(DATASET_PATH)
+
+    download('gzip.zip', IMAGES_LABELS_URL)
+
+    # Process example for EMNIST letters train set
+    extract_gzip('gzip/emnist-letters-train-images-idx3-ubyte.gz', 'emnist-letters-train-images-idx3-ubyte')
+    extract_gzip('gzip/emnist-letters-train-labels-idx1-ubyte.gz', 'emnist-letters-train-labels-idx1-ubyte')
+
+    train_images = read_idx('emnist-letters-train-images-idx3-ubyte')
+    train_labels = read_idx('emnist-letters-train-labels-idx1-ubyte')
+
+    print("Converting EMNIST letters training set...")
+    train_examples = convert_emnist(train_images, train_labels, fold='train')
+
+    # Repeat for test set and any other sets as needed
+
+    print("Dataset conversion finished")
 
 if __name__ == '__main__':
     main()
