@@ -5,7 +5,7 @@ from converter import ImageConverter, LabelConverter, FlexibleLabelConverter
 
 
 class CustomDataloader(object):
-    def __init__(self, dataset='mnist.dataset', batch_size=16, fold='train', shuffle=True, last_batch=False, example_count=None, **kwargs):
+    def __init__(self, dataset='emnist.dataset', batch_size=16, fold='train', shuffle=True, last_batch=False, example_count=None, **kwargs):
         self.dsf = DatasetFile(dataset, example_count=example_count)
         self.img_conv = ImageConverter(self.dsf, **kwargs)
         self.lab_conv = LabelConverter(self.dsf, **kwargs)

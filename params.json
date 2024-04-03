@@ -9,11 +9,14 @@
   "__dataset": "/home/deanheizmann/data/cifar10-split0a.dataset",
   "__comparison_dataset": "/home/deanheizmann/data/cifar10-split0b.dataset",
 
-  "dataset": "/home/user/heizmann/data/cifar10-split0a.dataset",
-  "comparison_dataset": "/home/user/heizmann/data/cifar10-split0b.dataset",
+  "___dataset": "/home/user/heizmann/data/cifar10-split0a.dataset",
+  "___comparison_dataset": "/home/user/heizmann/data/cifar10-split0b.dataset",
 
-  "_dataset": "/home/deanheizmann/data/tinyimagenet/archive/tiny-imagenet-200/train/n01443537/images",
-  "_comparison_dataset": "/home/deanheizmann/data/tinyimagenet/archive/tiny-imagenet-200/train/n01629819/images",
+  "X_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
+  "X_comparison_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
+
+  "dataset": "/home/deanheizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
+  "comparison_dataset": "/home/deanheizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
 
   "hypothesis": "Example run on tiny imagenet",
   "delete_background": false,
