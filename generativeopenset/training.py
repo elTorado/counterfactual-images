@@ -69,8 +69,6 @@ def train_gan(networks, optimizers, dataloader, epoch=None, **options):
         #loss_real = -logits.mean() * options['discriminator_weight']
         loss_real.backward()
         log.collect('Discriminator Real', loss_real)
-        print(images.data[0].shape)
-        print(fake_images.data[0].shape)
         gp = calc_gradient_penalty(netD, images.data, fake_images.data)
         gp.backward()
         log.collect('Gradient Penalty', gp)

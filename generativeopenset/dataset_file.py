@@ -90,7 +90,6 @@ class DatasetFile(object):
         for idx in indices:
             batch.append(self.get_example(fold, idx=idx))
             if len(batch) == batch_size:
-                print(len(batch))
                 yield batch
                 batch = []
                 

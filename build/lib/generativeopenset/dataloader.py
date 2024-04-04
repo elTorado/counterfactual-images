@@ -51,7 +51,6 @@ class CustomDataloader(object):
         """
         for batch in batcher:
             images, labels = self.convert(batch)
-            print("CONVERTED TO 32x32 IMAGES")
             yield images, labels
 
     def convert(self, batch):

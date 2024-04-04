@@ -17,7 +17,6 @@ DATA_DIR = '/mnt/nfs/data'
 # Converters can be used like a function, on a single example or a batch
 class Converter(object):
     def __call__(self, inputs):
-        print(" **** CALLED CONVERTER **** ")
         if isinstance(inputs, np.ndarray):
             return [self.from_array(e) for e in inputs]
         elif isinstance(inputs, list):
