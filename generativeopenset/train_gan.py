@@ -19,10 +19,16 @@ from options import load_options, get_current_epoch
 from counterfactual import generate_counterfactual
 from comparison import evaluate_with_comparison
 
+# THIS IS WERE THE PARAMS ARE LOADED!
 options = load_options(options)
 dataloader = FlexibleCustomDataloader(fold='train', **options)
-
 eval_dataloader = CustomDataloader(fold='test', **options)
+
+print(" ---------------------- Training Labels: --------------------")
+print(dataloader.lab_conv.labels)
+print(" ---------------------- Eval Labels: --------------------")
+print(eval_dataloader.lab_conv.labels)
+
 
 networks = build_networks(dataloader.num_classes, **options)
 optimizers = get_optimizers(networks, **options)

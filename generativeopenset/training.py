@@ -142,7 +142,7 @@ def train_gan(networks, optimizers, dataloader, epoch=None, **options):
 
         if i % 100 == 1:
             fixed_noise = make_noise(batch_size, latent_size, sample_scale, fixed_seed=42)
-            demo(networks, images, fixed_noise, ac_scale, sample_scale, result_dir, epoch, i)
+            # demo(networks, images, fixed_noise, ac_scale, sample_scale, result_dir, epoch, i)
     return True
 
 
