@@ -7,7 +7,9 @@ from scipy import io as sio
 import gzip
 import struct
 
-DATA_DIR = '/home/deanheizmann/data/emnist/'
+DATA_DIR = '/home/user/heizmann/data/emnist/'
+#DATA_DIR = '/home/deanheizmann/data/emnist/'
+
 DATASET_NAME = 'emnist'
 DATASET_PATH = os.path.join(DATA_DIR, DATASET_NAME)
 IMAGES_LABELS_URL = 'http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip'

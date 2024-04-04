@@ -10,12 +10,14 @@ import os
 import numpy as np
 import random
 import imutil
+from PIL import Image
 
 DATA_DIR = '/mnt/nfs/data'
 
 # Converters can be used like a function, on a single example or a batch
 class Converter(object):
     def __call__(self, inputs):
+        print(" **** CALLED CONVERTER **** ")
         if isinstance(inputs, np.ndarray):
             return [self.from_array(e) for e in inputs]
         elif isinstance(inputs, list):
@@ -27,17 +29,10 @@ class Converter(object):
 # Crops, resizes, normalizes, performs any desired augmentations
 # Outputs images as eg. 32x32x3 np.array or eg. 3x32x32 torch.FloatTensor
 class ImageConverter(Converter):
-    def __init__(self,
-            dataset,
-            image_size=32,
-            crop_to_bounding_box=True,
-            random_horizontal_flip=False,
-            delete_background=False,
-            torch=True,
-            normalize=True,
-            **kwargs):
-        width, height = image_size, image_size
-        self.img_shape = (width, height)
+    def __init__(self, dataset, image_size=32, crop_to_bounding_box=True,
+                 random_horizontal_flip=False, delete_background=False,
+                 torch=True, normalize=True, **kwargs):
+        self.img_shape = (image_size, image_size)  # Target image size
         self.bounding_box = crop_to_bounding_box
         self.data_dir = dataset.data_dir
         self.random_horizontal_flip = random_horizontal_flip
@@ -48,25 +43,44 @@ class ImageConverter(Converter):
     def to_array(self, example):
         filename = os.path.expanduser(example['filename'])
         if not filename.startswith('/'):
-            filename = os.path.join(DATA_DIR, filename)
-        box = example.get('box') if self.bounding_box else None
-        # HACK
-        #box = (.25, .75, 0, 1)
-        img = imutil.load(filename)
+            filename = os.path.join(self.data_dir, filename)
+        img = Image.open(filename)  # Open image using PIL
+
+        # Resize operation
+        img = img.resize(self.img_shape, Image.ANTIALIAS)
+
         if self.delete_background:
             seg_filename = os.path.expanduser(example['segmentation'])
-            segmentation = imutil.load(seg_filename)
+            segmentation = np.array(Image.open(seg_filename))
             foreground_mask = np.mean(segmentation, axis=-1) / 255.
-            img = img * np.expand_dims(foreground_mask, axis=-1)
+            img = np.array(img) * np.expand_dims(foreground_mask, axis=-1)
+        else:
+            img = np.array(img)
+
         if self.random_horizontal_flip and random.getrandbits(1):
             img = np.flip(img, axis=1)
-        if self.torch:
-            img = img.transpose((2,0,1))
+
         if self.normalize:
-            img *= 1.0 / 255
+            img = img.astype(np.float32) * (1.0 / 255)
+
+        if self.torch:
+            # Transpose the image for PyTorch [C, H, W] format
+            # Before the transpose operation
+            if img.ndim == 2:  # Grayscale image, with no channel dimension
+                img = np.expand_dims(img, axis=-1)  # Add a channel dimension
+                img = np.repeat(img, 3, axis=2)  # Replicate the grayscale channel 3 times
+
+            # Ensure img is in the correct format if it's already 3D but not in [H, W, C] format
+            elif img.shape[2] not in [1, 3, 4]:
+                raise ValueError("IMAGE CHANNELS INCONSISTENT OR UNEXPECTED")# Not a typical channel dimension
+            # Handle this case, possibly with an error or a different processing path
+
+            img = img.transpose((2, 0, 1))
+
         return img
 
     def from_array(self, array):
+        # This method can be used to convert back or perform post-processing
         return array
 
 

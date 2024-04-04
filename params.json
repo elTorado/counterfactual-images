@@ -6,17 +6,21 @@
   "cf_max_iters": 100,
   "cf_speed": 0.1,
 
-  "__dataset": "/home/deanheizmann/data/cifar10-split0a.dataset",
-  "__comparison_dataset": "/home/deanheizmann/data/cifar10-split0b.dataset",
+  "rdataset": "/home/deanheizmann/data/cifar10-split0a.dataset",
+  "rcomparison_dataset": "/home/deanheizmann/data/cifar10-split0b.dataset",
 
-  "___dataset": "/home/user/heizmann/data/cifar10-split0a.dataset",
-  "___comparison_dataset": "/home/user/heizmann/data/cifar10-split0b.dataset",
-
-  "X_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
-  "X_comparison_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
+  "Rdataset": "/home/deanheizmann/data/mnist-split0a.dataset",
+  "Rcomparison_dataset": "/home/deanheizmann/data/mnist-split0b.dataset",
 
   "dataset": "/home/deanheizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
   "comparison_dataset": "/home/deanheizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
+
+
+
+
+
+  "X_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
+  "X_comparison_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
 
   "hypothesis": "Example run on tiny imagenet",
   "delete_background": false,
