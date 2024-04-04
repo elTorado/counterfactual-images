@@ -9,18 +9,18 @@
   "rdataset": "/home/deanheizmann/data/cifar10-split0a.dataset",
   "rcomparison_dataset": "/home/deanheizmann/data/cifar10-split0b.dataset",
 
-  "Rdataset": "/home/deanheizmann/data/mnist-split0a.dataset",
-  "Rcomparison_dataset": "/home/deanheizmann/data/mnist-split0b.dataset",
+  "Edataset": "/home/deanheizmann/data/mnist-split0a.dataset",
+  "Ecomparison_dataset": "/home/deanheizmann/data/mnist-split0b.dataset",
 
-  "dataset": "/home/deanheizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
-  "comparison_dataset": "/home/deanheizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
-
-
+  "dataset": "/home/deanheizmann/data/emnist/emnist/emnist_split1.dataset",
+  "comparison_dataset": "/home/deanheizmann/data/emnist/emnist/emnist_split2.dataset",
 
 
 
-  "X_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
-  "X_comparison_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_mixed_1to11.dataset",
+
+
+  "X_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_split1.dataset",
+  "X_comparison_dataset": "/home/user/heizmann/data/emnist/emnist_split2.dataset",
 
   "hypothesis": "Example run on tiny imagenet",
   "delete_background": false,

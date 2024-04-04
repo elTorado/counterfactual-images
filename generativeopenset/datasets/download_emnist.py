@@ -7,8 +7,8 @@ from scipy import io as sio
 import gzip
 import struct
 
-DATA_DIR = '/home/user/heizmann/data/emnist/'
-#DATA_DIR = '/home/deanheizmann/data/emnist/'
+_DATA_DIR = '/home/user/heizmann/data/emnist/'
+DATA_DIR = '/home/deanheizmann/data/emnist/'
 
 DATASET_NAME = 'emnist'
 DATASET_PATH = os.path.join(DATA_DIR, DATASET_NAME)
@@ -111,8 +111,39 @@ def create_datasets(letters, digits, k = 5000):
         letters_PtoZ = [elem for elem in letters if elem in ['Z', 'Y', 'X', 'W', 'V', 'U', 'T', 'S', 'R', 'Q', 'P']]
         for element in digits + letters_PtoZ:
             fp.write(json.dumps(element, sort_keys=True) + '\n') 
-           
-                    
+    
+    ####### CREATE TEST AND VAL SPLITS ########
+    # Create two different files with different splits for later performance comparison
+    with open('emnist_split1.dataset', 'w') as file1, open('emnist_split2.dataset', 'w') as file2:
+        val_size = 5000
+        train_len = 0
+        val_len = 0
+        # First part of the loop for file1: Everything except the last 5000 samples are training
+        for element in digits[:-val_size]:
+            train_len += 1
+            file1.write(json.dumps(element, sort_keys=True) + '\n')
+        for element in digits[-val_size:]:
+            val_len += 1
+            element["fold"] = "val"
+            file1.write(json.dumps(element, sort_keys=True) + '\n')
+
+        print(" ==== CREATED TRAIN SPLIT WITH SIZE: " + str(train_len) + " ========")
+        print(" ==== CREATED VALIDATION SPLIT WITH SIZE: " + str(val_len) + " ========")        
+        train_len = 0
+        val_len = 0     
+
+        # For file2: First 5000 samples are validation
+        for element in digits[:val_size]:
+            val_len += 1
+            element["fold"] = "val"
+            file2.write(json.dumps(element, sort_keys=True) + '\n')
+        for element in digits[val_size:]:
+            train_len += 1
+            file2.write(json.dumps(element, sort_keys=True) + '\n')
+        
+        print(" ==== CREATED A COMPARISON TRAIN SPLIT WITH SIZE: " + str(train_len) + " ========")
+        print(" ==== CREATED A COMPARISON TRAIN VALIDATION SPLIT WITH SIZE: " + str(val_len) + " ========")        
+          
 def main():
     print(f"{DATASET_NAME} dataset download script initializing...")
     mkdir(DATA_DIR)
@@ -124,23 +155,23 @@ def main():
     # Process EMNIST letters train set
     extract_gzip('gzip/emnist-letters-train-images-idx3-ubyte.gz', 'emnist-letters-train-images-idx3-ubyte')
     extract_gzip('gzip/emnist-letters-train-labels-idx1-ubyte.gz', 'emnist-letters-train-labels-idx1-ubyte')
-    train_images = read_idx('emnist-letters-train-images-idx3-ubyte')
-    train_labels = read_idx('emnist-letters-train-labels-idx1-ubyte')
+    letter_images = read_idx('emnist-letters-train-images-idx3-ubyte')
+    letter_labels = read_idx('emnist-letters-train-labels-idx1-ubyte')
     print("Converting EMNIST letters data set...")
     print("===== Labels =======")
-    print(np.unique(train_labels))
-    examples_letters = convert_emnist(train_images, train_labels, fold='train', category='letters')
+    print(np.unique(letter_labels))
+    examples_letters = convert_emnist(letter_images, letter_labels, fold='train', category='letters')
     
 
     # Process EMNIST digits train set
     extract_gzip('gzip/emnist-digits-train-images-idx3-ubyte.gz', 'emnist-digits-train-images-idx3-ubyte')
     extract_gzip('gzip/emnist-digits-train-labels-idx1-ubyte.gz', 'emnist-digits-train-labels-idx1-ubyte')
-    train_images = read_idx('emnist-digits-train-images-idx3-ubyte')
-    train_labels = read_idx('emnist-digits-train-labels-idx1-ubyte')
+    digits_images = read_idx('emnist-digits-train-images-idx3-ubyte')
+    digites_labels = read_idx('emnist-digits-train-labels-idx1-ubyte')
     print("Converting EMNIST digits data set...")
     print("===== Labels =======")
-    print(np.unique(train_labels))
-    examples_digits = convert_emnist(train_images, train_labels, fold='train', category='digits')
+    print(np.unique(digites_labels))
+    examples_digits = convert_emnist(digits_images, digites_labels, fold='train', category='digits')
 
     #create dataset files that contain known and unknown splits
     create_datasets(letters=examples_letters, digits=examples_digits)
