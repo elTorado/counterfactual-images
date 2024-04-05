@@ -112,37 +112,55 @@ def create_datasets(letters, digits, k = 5000):
         for element in digits + letters_PtoZ:
             fp.write(json.dumps(element, sort_keys=True) + '\n') 
     
-    ####### CREATE TEST AND VAL SPLITS ########
-    # Create two different files with different splits for later performance comparison
-    with open('emnist_split1.dataset', 'w') as file1, open('emnist_split2.dataset', 'w') as file2:
-        val_size = 5000
-        train_len = 0
-        val_len = 0
-        # First part of the loop for file1: Everything except the last 5000 samples are training
-        for element in digits[:-val_size]:
+    ####### CREATE TRAIN, TEST AND VAL SPLITS ########
+    val_and_test_size = 3600  # Total size for both validation and test sets for the first split
+    val_size = 3600  # Validation size for the second split
+    train_size = 16800  # 70% of 24,000 for training in the first split
+    train_len = val_len = test_len = 0  # Initialize counters
+
+    # Split 1: Writing training and validation for file1, test data to file2
+    with open('emnist_split1.dataset', 'w') as file1:
+        # Training data
+        for element in digits[:train_size]:
             train_len += 1
             file1.write(json.dumps(element, sort_keys=True) + '\n')
-        for element in digits[-val_size:]:
+        # Validation data
+        for element in digits[train_size:train_size + val_size]:
             val_len += 1
             element["fold"] = "val"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
+        # Test data
+        for element in digits[train_size + val_size:]:
+            test_len += 1
+            element["fold"] = "test"
+            file1.write(json.dumps(element, sort_keys=True) + '\n')
 
-        print(" ==== CREATED TRAIN SPLIT WITH SIZE: " + str(train_len) + " ========")
-        print(" ==== CREATED VALIDATION SPLIT WITH SIZE: " + str(val_len) + " ========")        
-        train_len = 0
-        val_len = 0     
+    # Reset counters for the second file split
+    train_len = val_len = test_len = 0
 
-        # For file2: First 5000 samples are validation
+    # Split 2: Validation first, then training
+    with open('emnist_split2.dataset', 'w') as file2:
+        # Validation data
         for element in digits[:val_size]:
             val_len += 1
             element["fold"] = "val"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
-        for element in digits[val_size:]:
+        # The rest are considered as training data, but let's apply our previous logic to include test data too
+        remaining_samples = digits[val_size:]
+        split_point = len(remaining_samples) - val_and_test_size  # Point to split remaining for test
+        # Training data
+        for element in remaining_samples[:split_point]:
             train_len += 1
             file2.write(json.dumps(element, sort_keys=True) + '\n')
-        
-        print(" ==== CREATED A COMPARISON TRAIN SPLIT WITH SIZE: " + str(train_len) + " ========")
-        print(" ==== CREATED A COMPARISON TRAIN VALIDATION SPLIT WITH SIZE: " + str(val_len) + " ========")        
+        # Test data
+        for element in remaining_samples[split_point:]:
+            test_len += 1
+            element["fold"] = "test"
+            file2.write(json.dumps(element, sort_keys=True) + '\n')
+
+    print(" ==== CREATED A COMPARISON TRAIN SPLIT WITH SIZE: " + str(train_len) + " ========")
+    print(" ==== CREATED A COMPARISON VALIDATION SPLIT WITH SIZE: " + str(val_len) + " ========")
+    print(" ==== CREATED A COMPARISON TEST SPLIT WITH SIZE: " + str(test_len) + " ========")
           
 def main():
     print(f"{DATASET_NAME} dataset download script initializing...")
@@ -167,11 +185,11 @@ def main():
     extract_gzip('gzip/emnist-digits-train-images-idx3-ubyte.gz', 'emnist-digits-train-images-idx3-ubyte')
     extract_gzip('gzip/emnist-digits-train-labels-idx1-ubyte.gz', 'emnist-digits-train-labels-idx1-ubyte')
     digits_images = read_idx('emnist-digits-train-images-idx3-ubyte')
-    digites_labels = read_idx('emnist-digits-train-labels-idx1-ubyte')
+    digits_labels = read_idx('emnist-digits-train-labels-idx1-ubyte')
     print("Converting EMNIST digits data set...")
     print("===== Labels =======")
-    print(np.unique(digites_labels))
-    examples_digits = convert_emnist(digits_images, digites_labels, fold='train', category='digits')
+    print(np.unique(digits_labels))
+    examples_digits = convert_emnist(digits_images, digits_labels, fold='train', category='digits')
 
     #create dataset files that contain known and unknown splits
     create_datasets(letters=examples_letters, digits=examples_digits)
