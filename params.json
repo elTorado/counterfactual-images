@@ -20,7 +20,7 @@
 
 
   "X_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_split1.dataset",
-  "X_comparison_dataset": "/home/user/heizmann/data/emnist/emnist_split2.dataset",
+  "X_comparison_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_split2.dataset",
 
   "hypothesis": "Example run on tiny imagenet",
   "delete_background": false,
