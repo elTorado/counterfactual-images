@@ -12,15 +12,15 @@
   "Edataset": "/home/deanheizmann/data/mnist-split0a.dataset",
   "Ecomparison_dataset": "/home/deanheizmann/data/mnist-split0b.dataset",
 
-  "dataset": "/home/deanheizmann/data/emnist/emnist/emnist_split1.dataset",
-  "comparison_dataset": "/home/deanheizmann/data/emnist/emnist/emnist_split2.dataset",
+  "Xdataset": "/home/deanheizmann/data/emnist/emnist/emnist_split1.dataset",
+  "Xcomparison_dataset": "/home/deanheizmann/data/emnist/emnist/emnist_split2.dataset",
 
 
 
 
 
-  "X_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_split1.dataset",
-  "X_comparison_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_split2.dataset",
+  "dataset": "/home/user/heizmann/data/emnist/emnist/emnist_split1.dataset",
+  "comparison_dataset": "/home/user/heizmann/data/emnist/emnist/emnist_split2.dataset",
 
   "hypothesis": "Example run on tiny imagenet",
   "delete_background": false,

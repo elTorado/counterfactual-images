@@ -19,8 +19,11 @@ from options import load_options, get_current_epoch
 from counterfactual import generate_counterfactual
 from comparison import evaluate_with_comparison
 
-# THIS IS WERE THE PARAMS ARE LOADED!
+# Load params and check for existing files
 options = load_options(options)
+assert os.path.exists(options['dataset']), f"Dataset file {options['dataset']} does not exist."
+assert os.path.exists(options['comparison_dataset']), f"Comparison dataset file {options['comparison_dataset']} does not exist."
+
 dataloader = FlexibleCustomDataloader(fold='train', **options)
 eval_dataloader = CustomDataloader(fold='test', **options)
 
