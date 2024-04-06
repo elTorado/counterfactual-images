@@ -98,7 +98,9 @@ def generate_open_set(networks, dataloader, **options):
     # Save the images in jpg format to display to the user
     name = 'counterfactual_{}.jpg'.format(int(time.time()))
     jpg_filename = os.path.join(result_dir, 'images', name)
-    imutil.show(images, filename=jpg_filename)
+    
+    # THIS WILL SHOW IMAGES WHILE GENERATING ON THE RUN
+    #imutil.show(images, filename=jpg_filename)
     return images
 
 

@@ -131,7 +131,7 @@ def create_datasets(letters, digits, k = 5000):
             element["fold"] = "val"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
         # Test data
-        for element in digits[train_size+val_size:train_size+val_size+test_size]:
+        for element in letters[train_size+val_size:train_size+val_size+test_size]:
             test_len += 1
             element["fold"] = "test"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
@@ -157,7 +157,7 @@ def create_datasets(letters, digits, k = 5000):
             element["fold"] = "val"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
         # Test data
-        for element in digits[train_size:train_size+val_size]:
+        for element in letters[train_size:train_size+val_size]:
             test_len += 1
             element["fold"] = "test"
             file2.write(json.dumps(element, sort_keys=True) + '\n')

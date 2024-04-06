@@ -30,6 +30,7 @@ eval_dataloader = CustomDataloader(last_batch=True, shuffle=False, fold='test', 
 
 start_epoch = get_current_epoch(options['result_dir']) + 1
 for epoch in range(start_epoch, start_epoch + options['epochs']):
+    print("############ CLASSIFIER TRAINING ITERATION : CURRENT EPOCH: " + str(epoch)+ "#######################")
     train_classifier(networks, optimizers, dataloader, epoch=epoch, **options)
     eval_results = evaluate_with_comparison(networks, eval_dataloader, **options)
     pprint(eval_results)
