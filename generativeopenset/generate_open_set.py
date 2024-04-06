@@ -40,4 +40,5 @@ options['batch_size'] = dataloader.num_classes + 1
 networks = build_networks(dataloader.num_classes, **options)
 
 for i in range(options['count']):
+    print("XXXXXXXXXXXXXXXX GENERATING IMAGE NUMBER: " + str(i) + " XXXXXXXXXXXXXXXXXX")
     counterfactual.generate_open_set(networks, dataloader, **options)
