@@ -130,7 +130,7 @@ def create_datasets(letters, digits, k = 5000):
             element["fold"] = "val"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
         # Test data
-        for element in digits[train_size+val_size:train_size+val_size+test_size]:
+        for element in letters[train_size+val_size:train_size+val_size+test_size]:
             test_len += 1
             element["fold"] = "test"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
@@ -146,12 +146,12 @@ def create_datasets(letters, digits, k = 5000):
     # Split 2: Validation first, then training
     with open('emnist_split2.dataset', 'w') as file2:
         # Validation data
-        for element in letters[-train_size:]:
+        for element in digits[-train_size:]:
             train_len += 1
             element["fold"] = "train"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
         # Training data
-        for element in letters[train_size+val_size:train_size+val_size+test_size]:
+        for element in digits[train_size+val_size:train_size+val_size+test_size]:
             val_len += 1
             element["fold"] = "val"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
