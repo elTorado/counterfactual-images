@@ -114,9 +114,9 @@ def create_datasets(letters, digits, k = 5000):
     
     ####### CREATE TRAIN, TEST AND VAL SPLITS ########
     val_and_test_size = 7200  # Total size for both validation and test sets for the first split
-    val_size = 3600 
-    test_size = 3600 
-    train_size = 16800  # 70% of 24,000 for training in the first split
+    val_size = 5000 
+    test_size = 5000 
+    train_size = 19000  # 70% of 24,000 for training in the first split
     train_len = val_len = test_len = 0  # Initialize counters
 
     # Split 1: Writing training and validation for file1, test data to file2
