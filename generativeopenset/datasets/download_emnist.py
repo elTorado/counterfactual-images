@@ -113,10 +113,9 @@ def create_datasets(letters, digits, k = 5000):
             fp.write(json.dumps(element, sort_keys=True) + '\n') 
     
     ####### CREATE TRAIN, TEST AND VAL SPLITS ########
-    val_and_test_size = 7200  # Total size for both validation and test sets for the first split
-    val_size = 5000 
-    test_size = 5000 
-    train_size = 19000  # 70% of 24,000 for training in the first split
+    val_size = 3600 
+    test_size = 3600 
+    train_size = 16800  # 70% of 24,000 for training in the first split
     train_len = val_len = test_len = 0  # Initialize counters
 
     # Split 1: Writing training and validation for file1, test data to file2
@@ -131,7 +130,7 @@ def create_datasets(letters, digits, k = 5000):
             element["fold"] = "val"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
         # Test data
-        for element in letters[train_size+val_size:train_size+val_size+test_size]:
+        for element in digits[train_size+val_size:train_size+val_size+test_size]:
             test_len += 1
             element["fold"] = "test"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
@@ -147,12 +146,12 @@ def create_datasets(letters, digits, k = 5000):
     # Split 2: Validation first, then training
     with open('emnist_split2.dataset', 'w') as file2:
         # Validation data
-        for element in digits[-train_size:]:
+        for element in letters[-train_size:]:
             train_len += 1
             element["fold"] = "train"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
         # Training data
-        for element in digits[train_size+val_size:train_size+val_size+test_size]:
+        for element in letters[train_size+val_size:train_size+val_size+test_size]:
             val_len += 1
             element["fold"] = "val"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
