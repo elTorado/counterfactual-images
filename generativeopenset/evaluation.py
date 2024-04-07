@@ -226,11 +226,14 @@ def openset_kplusone(dataloader, netC):
     with torch.no_grad():  # Disable gradient calculation
         for images, labels in dataloader:
             preds = netC(images)
-            z = torch.exp(preds).sum(dim=1)
-            prob_known = z / (z + 1)
-            prob_unknown = 1 - prob_known
-            openset_scores.extend(prob_unknown.cpu().numpy())
+            z = torch.exp(preds).sum(dim=1)  # Sum of exponentials of the predictions
+            prob_known = z / (z + 1)  # Probability of belonging to a known class
+            prob_unknown = 1 - prob_known  # Probability of being an open-set (unknown)
+            openset_scores.extend(prob_unknown.cpu().numpy())  # Collect for all samples
+    
+    print(f"Total samples evaluated: {len(openset_scores)}")
     return np.array(openset_scores)
+
 
 
 def openset_softmax_confidence(dataloader, netC):
