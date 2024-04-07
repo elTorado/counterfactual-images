@@ -86,6 +86,9 @@ def convert_emnist(images, labels, fold, category):
     return examples
 
 def create_datasets(letters, digits, k = 5000):
+    letters_PtoZ = [elem for elem in letters if elem["label"] in ['Z', 'Y', 'X', 'W', 'V', 'U', 'T', 'S', 'R', 'Q', 'P']]
+    letters_AtoM = [elem for elem in letters if elem["label"] in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M']]
+
     print(" ========= WRITING DATASET FILES ==========")
     #File with all elements
     with open('emnist.dataset', 'w') as fp:
@@ -104,15 +107,14 @@ def create_datasets(letters, digits, k = 5000):
             
     #Mixed dataset with 10 digits and 11 letters for comparison with other methods
     with open('emnist_mixed_1to11.dataset', 'w') as fp:
-        letters_AtoM = [elem for elem in letters if elem in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M']]
         for element in digits + letters_AtoM:
             fp.write(json.dumps(element, sort_keys=True) + '\n')
     with open('emnist_mixed_2.dataset_12to22', 'w') as fp:
-        letters_PtoZ = [elem for elem in letters if elem in ['Z', 'Y', 'X', 'W', 'V', 'U', 'T', 'S', 'R', 'Q', 'P']]
         for element in digits + letters_PtoZ:
             fp.write(json.dumps(element, sort_keys=True) + '\n') 
     
     ####### CREATE TRAIN, TEST AND VAL SPLITS ########
+    
     val_size = 3600 
     test_size = 3600 
     train_size = 16800  # 70% of 24,000 for training in the first split
@@ -120,6 +122,7 @@ def create_datasets(letters, digits, k = 5000):
 
     # Split 1: Writing training and validation for file1, test data to file2
     with open('emnist_split1.dataset', 'w') as file1:
+        
         # Training data
         for element in digits[:train_size]:
             train_len += 1
@@ -130,7 +133,7 @@ def create_datasets(letters, digits, k = 5000):
             element["fold"] = "val"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
         # Test data
-        for element in letters[train_size+val_size:train_size+val_size+test_size]:
+        for element in letters_AtoM + letters[train_size+val_size:train_size+val_size+test_size]:
             test_len += 1
             element["fold"] = "test"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
@@ -156,7 +159,7 @@ def create_datasets(letters, digits, k = 5000):
             element["fold"] = "val"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
         # Test data
-        for element in letters[train_size:train_size+val_size]:
+        for element in letters_PtoZ + letters[train_size:train_size+val_size]:
             test_len += 1
             element["fold"] = "test"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
