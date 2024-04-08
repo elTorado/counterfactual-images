@@ -133,12 +133,12 @@ def create_datasets(letters, digits, k = 5000):
             element["fold"] = "val"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
         # Test data
-        for element in letters_AtoM + letters[train_size+val_size:train_size+val_size+test_size]:
+        for element in digits[train_size+val_size:train_size+val_size+test_size]:
             test_len += 1
             element["fold"] = "test"
             file1.write(json.dumps(element, sort_keys=True) + '\n')
     
-    print(" ==== CREATED  emnist_split1.dataset WITH FOLD SIZES:")
+    print(" ==== CREATED  emnist_split1.dataset with only digits WITH FOLD SIZES:")
     print(" ==== TRAIN SPLIT: " + str(train_len) + " ========")
     print(" ==== VALIDATION SPLIT : " + str(val_len) + " ========")
     print(" ==== TEST SPLIT: " + str(test_len) + " ========")
@@ -159,16 +159,42 @@ def create_datasets(letters, digits, k = 5000):
             element["fold"] = "val"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
         # Test data
-        for element in letters_PtoZ + letters[train_size:train_size+val_size]:
+        for element in letters_AtoM + digits[train_size:train_size+val_size]:
             test_len += 1
             element["fold"] = "test"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
 
-    print(" ==== CREATED emnist_split2.dataset WITH FOLD SIZES:")
+    print(" ==== CREATED emnist_split2.dataset with digits and letters A to M in test WITH FOLD SIZES:")
     print(" ==== TRAIN SPLIT: " + str(train_len) + " ========")
     print(" ==== VALIDATION SPLIT : " + str(val_len) + " ========")
     print(" ==== TEST SPLIT: " + str(test_len) + " ========")
-          
+    
+    # Reset counters for the second file split
+    train_len = val_len = test_len = 0
+
+    # Split 2: Validation first, then training
+    with open('emnist_split3.dataset', 'w') as file2:
+        # Validation data
+        for element in digits[-train_size:]:
+            train_len += 1
+            element["fold"] = "train"
+            file2.write(json.dumps(element, sort_keys=True) + '\n')
+        # Training data
+        for element in digits[train_size+val_size:train_size+val_size+test_size]:
+            val_len += 1
+            element["fold"] = "val"
+            file2.write(json.dumps(element, sort_keys=True) + '\n')
+        # Test data
+        for element in letters_PtoZ + digits[train_size:train_size+val_size]:
+            test_len += 1
+            element["fold"] = "test"
+            file2.write(json.dumps(element, sort_keys=True) + '\n')
+
+    print(" ==== CREATED emnist_split3.dataset with digits and letters P to Z in test WITH FOLD SIZES:")
+    print(" ==== TRAIN SPLIT: " + str(train_len) + " ========")
+    print(" ==== VALIDATION SPLIT : " + str(val_len) + " ========")
+    print(" ==== TEST SPLIT: " + str(test_len) + " ========")      
+    
 def main():
     print(f"{DATASET_NAME} dataset download script initializing...")
     mkdir(DATA_DIR)
