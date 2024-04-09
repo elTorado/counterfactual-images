@@ -6,9 +6,10 @@ from PIL import Image
 from scipy import io as sio
 import gzip
 import struct
+import csv
 
-_DATA_DIR = '/home/user/heizmann/data/emnist/'
-DATA_DIR = '/home/deanheizmann/data/emnist/'
+_DATA_DIR = '/home/user/heizmann/data/'
+DATA_DIR = '/home/deanheizmann/data/'
 
 DATASET_NAME = 'emnist'
 DATASET_PATH = os.path.join(DATA_DIR, DATASET_NAME)
@@ -65,8 +66,8 @@ def convert_emnist(images, labels, fold, category):
             # EMNIST letters are offset by 64
             label = chr(labels[i] + 64)
         elif category == 'digits':
-            # EMNIST digits are 0-9
-            label = str(labels[i])
+            # EMNIST digits are 0-9, it shall be an treated an integer
+            label = int(str(labels[i]))
         
         filename = os.path.join(category_path, f'{category}_{i:06d}.png')
         
@@ -90,29 +91,7 @@ def create_datasets(letters, digits, k = 5000):
     letters_AtoM = [elem for elem in letters if elem["label"] in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M']]
 
     print(" ========= WRITING DATASET FILES ==========")
-    #File with all elements
-    with open('emnist.dataset', 'w') as fp:
-        for element in digits + letters:
-            fp.write(json.dumps(element, sort_keys=True) + '\n')
-    
-    #File with only knowns / digits
-    with open('emnist_digits.dataset', 'w') as fp:
-        for element in digits:
-            fp.write(json.dumps(element, sort_keys=True) + '\n')
-    
-    #File with only unknowns / letters
-    with open('emnist_letters.dataset', 'w') as fp:
-        for element in letters:
-            fp.write(json.dumps(element, sort_keys=True) + '\n')
-            
-    #Mixed dataset with 10 digits and 11 letters for comparison with other methods
-    with open('emnist_mixed_1to11.dataset', 'w') as fp:
-        for element in digits + letters_AtoM:
-            fp.write(json.dumps(element, sort_keys=True) + '\n')
-    with open('emnist_mixed_2.dataset_12to22', 'w') as fp:
-        for element in digits + letters_PtoZ:
-            fp.write(json.dumps(element, sort_keys=True) + '\n') 
-    
+   
     ####### CREATE TRAIN, TEST AND VAL SPLITS ########
     
     val_size = 3600 
@@ -146,23 +125,29 @@ def create_datasets(letters, digits, k = 5000):
     # Reset counters for the second file split
     train_len = val_len = test_len = 0
 
-    # Split 2: Validation first, then training
-    with open('emnist_split2.dataset', 'w') as file2:
+    # Split 2: Test set contains digits and letters A to M
+    with open('emnist_split2.dataset', 'w') as file2, open('emnist_split2.csv', 'w', newline='') as csvfile2:
+        fieldnames = digits[0].keys()
+        writer = csv.DictWriter(csvfile2, fieldnames=fieldnames)
+        
         # Validation data
         for element in digits[-train_size:]:
             train_len += 1
             element["fold"] = "train"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
+            writer.writerow(element)
         # Training data
         for element in digits[train_size+val_size:train_size+val_size+test_size]:
             val_len += 1
             element["fold"] = "val"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
+            writer.writerow(element)
         # Test data
         for element in letters_AtoM + digits[train_size:train_size+val_size]:
             test_len += 1
             element["fold"] = "test"
             file2.write(json.dumps(element, sort_keys=True) + '\n')
+            writer.writerow(element)
 
     print(" ==== CREATED emnist_split2.dataset with digits and letters A to M in test WITH FOLD SIZES:")
     print(" ==== TRAIN SPLIT: " + str(train_len) + " ========")
@@ -172,23 +157,30 @@ def create_datasets(letters, digits, k = 5000):
     # Reset counters for the second file split
     train_len = val_len = test_len = 0
 
-    # Split 2: Validation first, then training
-    with open('emnist_split3.dataset', 'w') as file2:
+    # Split 3: Test set contains digits and letters P to Z
+    with open('emnist_split3.dataset', 'w') as file3, open('emnist_split3.csv', 'w', newline='') as csvfile3:
+        fieldnames = digits[0].keys()
+        writer = csv.DictWriter(csvfile3, fieldnames=fieldnames)
         # Validation data
         for element in digits[-train_size:]:
             train_len += 1
             element["fold"] = "train"
-            file2.write(json.dumps(element, sort_keys=True) + '\n')
+            file3.write(json.dumps(element, sort_keys=True) + '\n')
+            writer.writerow(element)
+
         # Training data
         for element in digits[train_size+val_size:train_size+val_size+test_size]:
             val_len += 1
             element["fold"] = "val"
-            file2.write(json.dumps(element, sort_keys=True) + '\n')
+            file3.write(json.dumps(element, sort_keys=True) + '\n')
+            writer.writerow(element)
+
         # Test data
         for element in letters_PtoZ + digits[train_size:train_size+val_size]:
             test_len += 1
             element["fold"] = "test"
-            file2.write(json.dumps(element, sort_keys=True) + '\n')
+            file3.write(json.dumps(element, sort_keys=True) + '\n')
+            writer.writerow(element)
 
     print(" ==== CREATED emnist_split3.dataset with digits and letters P to Z in test WITH FOLD SIZES:")
     print(" ==== TRAIN SPLIT: " + str(train_len) + " ========")

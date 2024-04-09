@@ -4,6 +4,11 @@ import json
 import os
 import sys
 import numpy as np
+import csv
+
+
+DATASET_DIR= "/home/user/heizmann/data/"
+
 
 # Print --help message before importing the rest of the project
 parser = argparse.ArgumentParser()
@@ -49,10 +54,15 @@ def save_image(pixels):
 
 
 def write_dataset(examples, filename):
-    with open(filename, 'w') as fp:
+    train_file_path = os.path.join(DATASET_DIR, "emnist_split1.dataset")
+    with open(filename, 'w') as fp, open(train_file_path, 'a', newline='') as trainfile:
+        fieldnames = examples[0].keys()
+        writer = csv.DictWriter(trainfile, fieldnames=fieldnames)
         for e in examples:
             fp.write(json.dumps(e))
             fp.write('\n')
+            writer.writerow(e)
+
 
 
 def grid_from_filename(filename):
@@ -66,6 +76,8 @@ def grid_from_filename(filename):
         exit()
     return grid
 
+try: train_file_path = os.path.join(DATASET_DIR, "emnist_split1.dataset")
+except: raise FileNotFoundError("Could not access emnist_split1.dataset at " + DATASET_DIR)
 
 examples = []
 for filename in ls('trajectories', '.npy'):
@@ -74,7 +86,7 @@ for filename in ls('trajectories', '.npy'):
         filename = save_image(image)
         examples.append({
             'filename': filename,
-            'label': 0,
+            'label': -1,
         })
 
 write_dataset(examples, options['output_filename'])
